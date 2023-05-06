@@ -1,0 +1,20 @@
+# Create the fastq file
+samtools fastq WebDocument_9-7_mysample1.bam > WebDocument_9-7_sample1.fastq
+# Index hg19.fa for bwa
+[student@MSBI32400Lab3 data]$ bwa index -a bwtsw hg19.fa
+# Generate the SAM file
+bwa mem -R '@RG\tID:finalproject\tSM:WebDocument_9-7_mysample1'hg19.fa WebDocument_9-7_mysample1.fastq > WebDocument_9-7_mysample1.sam
+# view, sort, and index all the things
+samtools view -bt data/hg19.fai data/WebDocument_9-7_mysample1.sam > data/WebDocument_9-7_mysample1.bam
+samtools sort -o data/WebDocument_9-7_mysample1_sorted.bam data/WebDocument_9-7_mysample1.bam
+samtools index data/WebDocument_9-7_mysample1_sorted.bam
+samtools view -H data/WebDocument_9-7_mysample1_sorted.bam
+# Generate mpileup & run bcftools
+samtools mpileup -uf hg19.fa WebDocument_9-7_mysample1.bam | bcftools call -mv > WebDocument_9-7_mysample1_var.raw.vcf
+more WebDocument_9-7_mysample1_var.flt.vcf | grep 'PASS' | wc -l
+# Count the lines 
+more WebDocument_9-7_mysample1_var.flt.vcf | grep 'hg19' | wc -l
+# Analyze with snpEff + Clinvar Feb 2017 
+java -Xmx2G -jar /data/snpEff/snpEff.jar eff -canon -noLog hg19 WebDocument_9-7_mysample1_var.flt.vcf > /data/finalproject/results/WebDocument_9-7_mysample1_var.flt.vcf_snpEff.vcf
+java -Xmx2G -jar /data/snpEff/SnpSift.jar annotate -noLog /data/snpEff/data/hg19/clinvar/clinvar_20171231.vcf.gz /data/finalproject/results/WebDocument_9-7_mysample1_var.flt.vcf_snpEff.vcf > /data/finalproject/results/WebDocument_9-7_mysample1_var.flt_snpEff.clinvar.vcf
+ 
