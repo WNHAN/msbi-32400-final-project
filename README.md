@@ -1,1 +1,2 @@
 # msbi-32400-final-project
+Call variants on Pevsner autism bam (Web Document 9.7 at http://www.bioinfbook.org/php/ then annotate with snpEff + Clinvar and upload to VEP for ExAC population frequencies. Compare variants in the 101 target gene list with ExAC frequencies expected autism frequencies. Use hg19.fa (see below), not Pevsner's WebDocument_9-6_101autism.fa. Use CDC 2016 frequencies: https://www.cdc.gov/ncbddd/autism/
